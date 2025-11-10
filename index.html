@@ -141,13 +141,32 @@
             font-size: 14px;
         }
 
+        .color-pickers-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .color-picker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-picker-item label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
         input[type="color"] {
-            width: 100%;
+            width: 40px;
             height: 40px;
             border: 1px solid #3d4556;
             border-radius: 8px;
             cursor: pointer;
             background: #1a1f2e;
+            flex-shrink: 0;
         }
 
         input[type="checkbox"] {
@@ -294,19 +313,37 @@
         </div>
 
         <div class="control-section">
-            <div class="control-group">
-                <label for="containerBgColorPicker">Bar Color</label>
-                <input type="color" id="containerBgColorPicker" value="#2d3748">
+            <div class="color-pickers-row">
+                <div class="color-picker-item">
+                    <label for="containerBgColorPicker">Bar Color</label>
+                    <input type="color" id="containerBgColorPicker" value="#2d3748">
+                </div>
+                <div class="color-picker-item">
+                    <label for="barFillColorPicker">Bar Fill</label>
+                    <input type="color" id="barFillColorPicker" value="#ffd700">
+                </div>
+                <div class="color-picker-item">
+                    <label for="percentageColorPicker">Text Color</label>
+                    <input type="color" id="percentageColorPicker" value="#1a1f2e">
+                </div>
             </div>
 
             <div class="control-group">
-                <label for="barFillColorPicker">Bar Fill Color</label>
-                <input type="color" id="barFillColorPicker" value="#ffd700">
+                <label for="heightSlider">Height (px)</label>
+                <div class="slider-container">
+                    <input type="range" id="heightSlider" min="10" max="80" value="40">
+                    <input type="number" id="heightInput" min="10" max="80" value="40">
+                    <span class="speed-unit">px</span>
+                </div>
             </div>
 
             <div class="control-group">
-                <label for="percentageColorPicker">Text Color</label>
-                <input type="color" id="percentageColorPicker" value="#1a1f2e">
+                <label for="borderRadiusSlider">Border Radius</label>
+                <div class="slider-container">
+                    <input type="range" id="borderRadiusSlider" min="0" max="40" value="20">
+                    <input type="number" id="borderRadiusInput" min="0" max="40" value="20">
+                    <span class="speed-unit">px</span>
+                </div>
             </div>
 
             <div class="control-group">
@@ -354,6 +391,10 @@
         const percentageColorPicker = document.getElementById('percentageColorPicker');
         const speedSlider = document.getElementById('speedSlider');
         const speedInput = document.getElementById('speedInput');
+        const heightSlider = document.getElementById('heightSlider');
+        const heightInput = document.getElementById('heightInput');
+        const borderRadiusSlider = document.getElementById('borderRadiusSlider');
+        const borderRadiusInput = document.getElementById('borderRadiusInput');
         const hidePercentageCheckbox = document.getElementById('hidePercentage');
         const customMessage = document.getElementById('customMessage');
 
@@ -405,12 +446,36 @@
             startBtn.textContent = 'Start';
             startTime = null;
             if (animationId) cancelAnimationFrame(animationId);
+            
+            // Reset all colors
+            containerBgColorPicker.value = '#2d3748';
+            barFillColorPicker.value = '#ffd700';
+            percentageColorPicker.value = '#1a1f2e';
+            progressBarWrapper.style.background = '#2d3748';
+            progressFill.style.background = '#ffd700';
+            progressText.style.color = '#1a1f2e';
+            
+            // Reset height
+            heightSlider.value = 40;
+            heightInput.value = 40;
+            progressBarWrapper.style.height = '40px';
+            
+            // Reset border radius
+            borderRadiusSlider.value = 20;
+            borderRadiusInput.value = 20;
+            progressBarWrapper.style.borderRadius = '20px';
+            
+            // Reset duration
             speedSlider.classList.remove('disabled-slider');
             speedInput.classList.remove('custom-active');
-            speedSlider.value = speedInput.value;
+            speedSlider.value = 10;
+            speedInput.value = 10;
+            
+            // Reset text options
             customMessage.value = '';
             hidePercentageCheckbox.checked = false;
             progressText.classList.remove('hidden');
+            
             updateProgressBar();
         });
 
@@ -464,6 +529,34 @@
                 progressText.classList.remove('hidden');
                 updateProgressBar();
             }
+        });
+
+        heightSlider.addEventListener('input', function(e) {
+            heightInput.value = e.target.value;
+            progressBarWrapper.style.height = e.target.value + 'px';
+        });
+
+        heightInput.addEventListener('input', function(e) {
+            let val = parseInt(e.target.value) || 10;
+            if (val < 10) val = 10;
+            if (val > 80) val = 80;
+            heightInput.value = val;
+            heightSlider.value = val;
+            progressBarWrapper.style.height = val + 'px';
+        });
+
+        borderRadiusSlider.addEventListener('input', function(e) {
+            borderRadiusInput.value = e.target.value;
+            progressBarWrapper.style.borderRadius = e.target.value + 'px';
+        });
+
+        borderRadiusInput.addEventListener('input', function(e) {
+            let val = parseInt(e.target.value) || 0;
+            if (val < 0) val = 0;
+            if (val > 40) val = 40;
+            borderRadiusInput.value = val;
+            borderRadiusSlider.value = val;
+            progressBarWrapper.style.borderRadius = val + 'px';
         });
     </script>
 </body>
